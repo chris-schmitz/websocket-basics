@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/ws": "^7.4.4",
+    "webpack": "^5.37.0",
     "ws": "^7.4.5"
   },
   "devDependencies": {
