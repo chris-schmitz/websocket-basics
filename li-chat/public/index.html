@@ -1,0 +1,72 @@
+<html>
+<head>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            background: lightcyan;
+            height: 100vh;
+            width: 100vw;
+            justify-content: center;
+            align-items: center
+        }
+
+        .bounds {
+            display: flex;
+            align-items: stretch;
+            background: ghostwhite;
+            height: 500px;
+            width: 300px;
+            border: 1px solid gray;
+            flex-direction: column;
+        }
+
+        .bounds div {
+            margin: 10px;
+        }
+
+        .chat-head {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chat-head *, .chat-foot * {
+            margin: 5px;
+        }
+
+        .chat-body {
+            background: white;
+            flex: 1;
+        }
+
+        .chat-body div {
+            width: 100%;
+        }
+
+        .chat-foot {
+            display: flex;
+        }
+
+        .chat-foot input, .chat-head input {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+<div class="bounds">
+    <div class="chat-head">
+        <label for="user-name">Name:</label><input id="user-name">
+        <button id="connect-button">connect</button>
+    </div>
+    <div class="chat-body">
+        <div id="chat-log"></div>
+    </div>
+    <div class="chat-foot">
+        <input id="user-input" disabled>
+        <button id="send-button" disabled>send</button>
+    </div>
+</div>
+<script src="bundle.js"></script>
+</body>
+</html>
