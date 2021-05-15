@@ -107,6 +107,13 @@ class WebsocketClient {
 
     private addToLog(data: { message: string, from: string }) {
         this.chatLog!.innerText += `${data.from}: ${data.message}\n`
+        this.scrollDown()
+    }
+
+    private scrollDown() {
+        const objDiv = document.querySelector(".chat-body")
+        objDiv!.scrollTop = objDiv!.scrollHeight;
+
     }
 }
 

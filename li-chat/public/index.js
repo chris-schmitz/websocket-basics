@@ -91,6 +91,11 @@ var WebsocketClient = /** @class */ (function () {
     };
     WebsocketClient.prototype.addToLog = function (data) {
         this.chatLog.innerText += data.from + ": " + data.message + "\n";
+        this.scrollDown();
+    };
+    WebsocketClient.prototype.scrollDown = function () {
+        var objDiv = document.querySelector(".chat-body");
+        objDiv.scrollTop = objDiv.scrollHeight;
     };
     return WebsocketClient;
 }());
