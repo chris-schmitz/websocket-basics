@@ -41,9 +41,9 @@ class RotationTracker {
     }
 
     private updateOrientation(event: DeviceOrientationEvent){
-        this.x = event.beta
-        this.y = event.gamma
-        this.z = event.alpha
+        this.x = Math.floor(event.beta!) * 0.01
+        this.y = Math.floor(event.gamma!) * 0.01
+        this.z = Math.floor(event.alpha!) * 0.01
         this.updateUi()
         this.sendToServer({action:Action.UPDATE_COORDINATES ,x: this.x!, y: this.y!, z: this.z!})
     }

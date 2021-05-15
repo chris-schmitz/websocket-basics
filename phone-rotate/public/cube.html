@@ -9,25 +9,52 @@
 </head>
 <body>
 <script>
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    // * I know I should update the webpack config to do multiple entry points and then pull this in via a script import,
+    // * but I'm feeling lazy today. Maybe future chris will do it :P
 
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement )
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshNormalMaterial( { color: 0xFF00FF } );
-    // const material = new THREE.MeshBasicMaterial( { color: 0xFF00FF } );
-    const cube = new THREE.Mesh( geometry, material );
-    scene.add( cube );
+    class SceneManager {
+        scene
+        camera
+        renderer
+        cube
 
-    camera.position.z = 5;
-    function animate() {
-        requestAnimationFrame( animate );
-        renderer.render( scene, camera );
+        constructor(){
+            this.createScene()
+            this.addCube()
+            this.startAnimation()
+        }
+
+        createScene() {
+            this.scene = new THREE.Scene();
+            this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+            this.renderer = new THREE.WebGLRenderer();
+            this.renderer.setSize( window.innerWidth, window.innerHeight );
+
+            document.body.appendChild( this.renderer.domElement )
+            this.camera.position.z = 20;
+        }
+
+        addCube() {
+            const geometry = new THREE.BoxGeometry(10,10,10);
+            const material = new THREE.MeshNormalMaterial();
+            this.cube = new THREE.Mesh( geometry, material );
+            this.scene.add( this.cube );
+        }
+
+        updateCubeRotation(x,y,z, auto = false){
+            this.cube.rotation.x = auto ? this.cube.rotation.x + x : x
+            this.cube.rotation.y = auto ? this.cube.rotation.y + y : y
+            this.cube.rotation.z = auto ? this.cube.rotation.z + z : z
+        }
+
+        startAnimation() {
+            const animate = ()=>{
+                requestAnimationFrame( animate );
+                this.renderer.render( this.scene, this.camera );
+            }
+            animate()
+        }
     }
-    animate();
-    // ---
 
     class RotationTracker {
         websocket= null
@@ -36,38 +63,36 @@
         x= 0
         y= 0
         z= 0
+        autoRotate = true
 
 
-        constructor(url) {
+        constructor(url, sceneManager) {
             this.websocketUrl = url
+            this.sceneManager = sceneManager
         }
 
         begin() {
             this.connectToServer()
-            // this.grabElements()
-            // this.addDomListeners()
+            this.startAutoRotateInterval()
+        }
+
+        startAutoRotateInterval(){
+            setInterval(() => {
+                if(this.autoRotate){
+                    this.sceneManager.updateCubeRotation(0.01, 0.01, 0, true)
+                }
+            },50)
         }
 
         registerAsCubeClient() {
             this.sendToServer(JSON.stringify({action: 0, type: 1}))
         }
 
-        addDomListeners() {
-            // window.addEventListener("deviceorientation",  this.updateOrientation.bind(this))
+
+        updateOrientation(data){
+            this.autoRotate = false
+            this.sceneManager.updateCubeRotation(data.x, data.y, data.z)
         }
-
-        // private updateOrientation(event: DeviceOrientationEvent){
-        //     this.x = event.beta
-        //     this.y = event.gamma
-        //     this.z = event.alpha
-        //     this.updateUi()
-        //     this.sendToServer({x: this.x!, y: this.y!, z: this.z!})
-        // }
-
-        // private updateUi() {
-        //     this.statsOutput!.innerText = `x: ${this.x}\ny: ${this.y}\nz: ${this.z}`
-        // }
-
 
         connectToServer() {
             this.websocket = new WebSocket(this.websocketUrl)
@@ -86,26 +111,15 @@
             this.registerAsCubeClient()
         }
 
-
-
-        grabElements() {
-            // this.statsOutput = document.querySelector("#stats-output")
-        }
-
         handleMessage(message) {
             const data = JSON.parse(message.data)
-            console.log(data)
-            cube.rotation.x = data.x
-            cube.rotation.y = data.y
-            cube.rotation.z = data.z
+            this.updateOrientation(data)
         }
-
     }
 
-    const client
-        = new RotationTracker(`wss://${window.location.host}`)
+    const sceneManager = new SceneManager()
+    const client = new RotationTracker(`wss://${window.location.host}`, sceneManager)
 
-    // @ts-ignore
     document.addEventListener("DOMContentLoaded", client.begin())
 </script>
 </body>
