@@ -1,0 +1,112 @@
+<html>
+<head>
+    <style>
+        html,body{margin:0;padding:0;display:flex;justify-content: center;align-items: center;}
+        code {font-size:15pt;height:80vh;width:80vw;}
+    </style>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' >
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous"></script>
+</head>
+<body>
+<script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement )
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshNormalMaterial( { color: 0xFF00FF } );
+    // const material = new THREE.MeshBasicMaterial( { color: 0xFF00FF } );
+    const cube = new THREE.Mesh( geometry, material );
+    scene.add( cube );
+
+    camera.position.z = 5;
+    function animate() {
+        requestAnimationFrame( animate );
+        renderer.render( scene, camera );
+    }
+    animate();
+    // ---
+
+    class RotationTracker {
+        websocket= null
+        websocketUrl
+
+        x= 0
+        y= 0
+        z= 0
+
+
+        constructor(url) {
+            this.websocketUrl = url
+        }
+
+        begin() {
+            this.connectToServer()
+            // this.grabElements()
+            // this.addDomListeners()
+        }
+
+        registerAsCubeClient() {
+            this.sendToServer(JSON.stringify({action: 0, type: 1}))
+        }
+
+        addDomListeners() {
+            // window.addEventListener("deviceorientation",  this.updateOrientation.bind(this))
+        }
+
+        // private updateOrientation(event: DeviceOrientationEvent){
+        //     this.x = event.beta
+        //     this.y = event.gamma
+        //     this.z = event.alpha
+        //     this.updateUi()
+        //     this.sendToServer({x: this.x!, y: this.y!, z: this.z!})
+        // }
+
+        // private updateUi() {
+        //     this.statsOutput!.innerText = `x: ${this.x}\ny: ${this.y}\nz: ${this.z}`
+        // }
+
+
+        connectToServer() {
+            this.websocket = new WebSocket(this.websocketUrl)
+            this.websocket.addEventListener("open", this.onOpenHandler.bind(this))
+            this.websocket.addEventListener("close", (event) => console.log("connection closed"))
+            this.websocket.addEventListener("error", (event) => console.log("connected to server"))
+            this.websocket.addEventListener("message", this.handleMessage.bind(this))
+        }
+
+        sendToServer(data) {
+            this.websocket.send(data)
+        }
+
+        onOpenHandler(event) {
+            console.log("connected to server")
+            this.registerAsCubeClient()
+        }
+
+
+
+        grabElements() {
+            // this.statsOutput = document.querySelector("#stats-output")
+        }
+
+        handleMessage(message) {
+            const data = JSON.parse(message.data)
+            console.log(data)
+            cube.rotation.x = data.x
+            cube.rotation.y = data.y
+            cube.rotation.z = data.z
+        }
+
+    }
+
+    const client
+        = new RotationTracker(`wss://${window.location.host}`)
+
+    // @ts-ignore
+    document.addEventListener("DOMContentLoaded", client.begin())
+</script>
+</body>
+</html>
