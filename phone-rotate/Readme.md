@@ -29,8 +29,6 @@ Also note that I saved the intellij run config in the `.idea` directory, so you 
 
 ![run configs](./readme_attachments/intellij-run-configs.png)
 
-![demo]()
-
 ## Phone and Computer clients
 
 The phone-rotate demo is meant to run from your phone and your computer. The phone will connect to the websocket server and stream device rotation information
