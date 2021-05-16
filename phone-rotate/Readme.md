@@ -47,11 +47,11 @@ You'll still get a warning in the browser, but in firefox you can bypass it:
 
 ![firefox bypass](./readme_attachments/firefox-bypass.png)
 
-In chrome you'll need to enable the "allow insecure localhost" flag:
+In chrome you'll need to enable the "allow insecure localhost" flag by editing `chrome://flags#allow-insecure-localhost`:
 
 ![chrome bypass](./readme_attachments/chrome-bypass.png)
 
-## Launching the cube client
+## Launching the clients
 
 Launch the codebase. On your laptop/desktop launch:
 
