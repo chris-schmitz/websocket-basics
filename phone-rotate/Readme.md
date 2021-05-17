@@ -2,7 +2,7 @@
 
 ![demo](./readme_attachments/demo.gif)
 
-The phone rotate demo aims to highlight the speed that websocket communication.
+Phone rotate is a dual screen demo that aims to highlight the speed that websocket communication. As you rotate your phone with the phone client open the cube on the separate screen will follow the movements.
 
 ## Up and running
 

@@ -3,7 +3,7 @@
 ![demo](./readme_attachments/li-chat-demo.gif)
 
 This demo shows the real time nature of websocket communication as well as how to work with the anonymous nature of the websocket instances on the server (at
-least for the `ws` package).
+least for the `ws` package). It's a simple group chat application with message history (per session).
 
 ## Up and running
 
